@@ -1,0 +1,14 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    Enter your information
+{% endblock %}
+
+{% block content %}
+    <h1>Advice: {{ advice }}</h1>
+    <h1>Verbal: {{ verbal }}</h1>
+
+    {% next_button %}
+
+{% endblock %}
