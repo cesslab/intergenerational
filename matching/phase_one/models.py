@@ -3,6 +3,7 @@ from otree.api import (
     Currency as c, currency_range
 )
 
+import random
 
 author = 'Your name here'
 
@@ -20,11 +21,24 @@ class Constants(BaseConstants):
 
 class Subsession(BaseSubsession):
     def creating_session(self):
+        # Reading in the advice
+        all_advice = []
+        number_of_players = 2
+        for i in range(number_of_players):
+            all_advice[i] = {
+                'advice': self.session.config['advice_{}'.format(i)],
+                'verbal': self.session.config['verbal_{}'.format(i)]
+            }
+
+        # Process the advice (i.e. randomly shuffle, etc.)
+        random.shuffle(all_advice)
+
+        # Assigning the advice to each player
         if self.round_number == 1:
             for index, player in enumerate(self.get_players()):
                 print(self.session.config["advice_{}".format(index)])
-                player.participant.vars['advice'] = self.session.config['advice_{}'.format(index)]
-                player.participant.vars['verbal'] = self.session.config['verbal_{}'.format(index)]
+                player.participant.vars['advice'] = all_advice[index]['advice']
+                player.participant.vars['verbal'] = all_advice[index]['verbal']
 
 
 
