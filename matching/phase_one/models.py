@@ -25,10 +25,10 @@ class Subsession(BaseSubsession):
         all_advice = []
         number_of_players = 2
         for i in range(number_of_players):
-            all_advice[i] = {
+            all_advice.append({
                 'advice': self.session.config['advice_{}'.format(i)],
                 'verbal': self.session.config['verbal_{}'.format(i)]
-            }
+            })
 
         # Process the advice (i.e. randomly shuffle, etc.)
         random.shuffle(all_advice)
