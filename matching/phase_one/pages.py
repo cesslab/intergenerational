@@ -13,7 +13,7 @@ class ReceiveAdvice(Page):
 
 class GiveAdvice(Page):
     form_model = 'player'
-    form_fields = ['advice', 'verbal']
+    form_fields = ['advice', 'verbal', 'q1']
 
 
 page_sequence = [ReceiveAdvice, GiveAdvice]

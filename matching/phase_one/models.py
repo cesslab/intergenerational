@@ -3,6 +3,7 @@ from otree.api import (
     Currency as c, currency_range
 )
 
+from django import forms
 import random
 
 author = 'Your name here'
@@ -26,6 +27,7 @@ class Subsession(BaseSubsession):
         number_of_players = 2
         for i in range(number_of_players):
             all_advice.append({
+                'third': self.session.config['third_party'],
                 'advice': self.session.config['advice_{}'.format(i)],
                 'verbal': self.session.config['verbal_{}'.format(i)]
             })
@@ -51,3 +53,5 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     advice = models.StringField()
     verbal = models.StringField()
+    q1 = models.StringField(widget=forms.CheckboxSelectMultiple(choices=(("1", ""), ("2", ""), ("3", ""))))
+    b = models.BooleanField(initial=False)
