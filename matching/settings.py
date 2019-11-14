@@ -17,13 +17,7 @@ SESSION_CONFIGS = [
        'display_name': "Offer Experiment",
        'num_demo_participants': 1,
        'app_sequence': ['phase_one'],
-       'third_party': '',
-       'advice_0': '',
-       'verbal_0': '',
-       'advice_1': '',
-       'verbal_1': '',
-       'advice_2': '',
-       'verbal_2': '',
+       'generation_number': '0',
     },
 ]
 
