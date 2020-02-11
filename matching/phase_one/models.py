@@ -10,6 +10,8 @@ import random
 import json
 import logging
 
+import boto3
+
 author = 'Your name here'
 
 doc = """
@@ -27,19 +29,22 @@ class Constants(BaseConstants):
 class Subsession(BaseSubsession):
     def creating_session(self):
         logger = logging.getLogger(__name__)
-        # Reading in the advice
-        BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-        file_name = 'generation_{}.json'.format(self.session.config['generation_number'])
-        generation_file = os.path.join(os.path.dirname(BASE_DIR), "matching", "advice", file_name)
-        try:
-            with open(generation_file) as file:
-                all_advice = json.load(file)
 
-                if self.round_number == 1:
-                    for index, player in enumerate(self.get_players()):
-                        player.participant.vars['all_advice'] = all_advice
-        except FileNotFoundError as e:
-            logger.error('Unable to open generation file. {}'.format(e))
+        # Reads Json from Amazon S3
+        BUCKET = os.environ.get('AWS_STORAGE_BUCKET_NAME') 
+        FILE_TO_READ = 'generation.json'
+        client = boto3.client('s3', 
+        aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'))
+
+        result = client.get_object(Bucket=BUCKET, Key=FILE_TO_READ)
+        text = result["Body"].read().decode()
+        all_advice = json.loads(text)
+        print(all_advice)
+
+        if self.round_number == 1:
+            for index, player in enumerate(self.get_players()):
+                player.participant.vars['all_advice'] = all_advice
 
         # number_of_players = 2
         # for i in range(number_of_players):
@@ -70,14 +75,25 @@ class Group(BaseGroup):
                 }
             }
 
-        BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-        file_name = 'generation_{}.json'.format(int(self.session.config['generation_number']) + 1)
-        generation_file = os.path.join(os.path.dirname(BASE_DIR), "matching", "advice", file_name)
-        try:
-            with open(generation_file, 'w') as file:
-                file.write(json.dumps(all_advice))
-        except IOError as e:
-            print("Error writing json file: {}".format(e))
+        # BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+        # file_name = 'generation_{}.json'.format(int(self.session.config['generation_number']) + 1)
+        # generation_file = os.path.join(os.path.dirname(BASE_DIR), "matching", "advice", file_name)
+
+        # Writing Json to Amazon S3
+        BUCKET = os.environ.get('AWS_STORAGE_BUCKET_NAME') 
+        FILE_TO_READ = 'generation.json'
+        client = boto3.client('s3', 
+        aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'))
+
+        response = client.put_object(Bucket=BUCKET, Body=json.dumps(all_advice), Key=FILE_TO_READ)
+
+        # # Writing Json to file
+        # try:
+        #     with open(generation_file, 'w') as file:
+        #         file.write(json.dumps(all_advice))
+        # except IOError as e:
+        #     print("Error writing json file: {}".format(e))
 
 
 
